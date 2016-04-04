@@ -85,7 +85,3 @@ class TestFunctionSignatures(unittest.TestCase):
                 ('self', Ellipsis, Ellipsis, self_kind),
                 ('a', Ellipsis, Ellipsis, "positional_or_keyword"),
                 ), Ellipsis))
-
-
-if __name__ == "__main__":
-    unittest.begin()
