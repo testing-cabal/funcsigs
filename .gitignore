@@ -16,3 +16,4 @@ htmlcov/
 tmp/
 coverage.xml
 junit.xml
+.eggs/

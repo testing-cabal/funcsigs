@@ -26,7 +26,7 @@ The ``funcsigs`` backport has been tested against:
 * CPython 3.4
 * CPython 3.5
 * CPython nightlies
-* PyPy and PyPy3
+* PyPy and PyPy3(currently failing CI)
 
 Continuous integration testing is provided by `Travis CI`_.
 
