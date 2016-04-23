@@ -3,6 +3,12 @@ from setuptools import setup
 import re
 import sys
 
+def requirements():
+    "Get the module requirements"
+    if sys.version_info < (2, 7):
+        return ['ordereddict']
+    return []
+
 def load_version(filename='funcsigs/version.py'):
     "Parse a __version__ number from a source file"
     with open(filename) as source:
@@ -26,7 +32,7 @@ setup(
     description="Python function signatures from PEP362 for Python 2.6, 2.7 and 3.2+",
     long_description=open('README.rst').read(),
     license="ASL",
-    install_requires = ['ordereddict'],
+    install_requires = requirements(),
     classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
