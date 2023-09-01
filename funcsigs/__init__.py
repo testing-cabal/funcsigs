@@ -294,6 +294,22 @@ class Parameter(object):
     def kind(self):
         return self._kind
 
+    def __getstate__(self):
+        return {
+            'kind': self._kind,
+            'default': self._default,
+            'annotation': self._annotation,
+            'name': self._name,
+            'partial_kwarg': self._partial_kwarg,
+        }
+
+    def __setstate__(self, dct):
+        self._kind = dct['kind']
+        self._default = dct['default']
+        self._annotation = dct['annotation']
+        self._name = dct['name']
+        self._partial_kwarg = dct['partial_kwarg']
+
     def replace(self, name=_void, kind=_void, annotation=_void,
                 default=_void, _partial_kwarg=_void):
         '''Creates a customized copy of the Parameter.'''
@@ -635,6 +651,16 @@ class Signature(object):
     @property
     def return_annotation(self):
         return self._return_annotation
+
+    def __getstate__(self):
+        return {
+            'parameters': self._parameters,
+            'return_annotation': self._return_annotation,
+        }
+
+    def __setstate__(self, dct):
+        self._parameters = dct['parameters']
+        self._return_annotation = dct['return_annotation']
 
     def replace(self, parameters=_void, return_annotation=_void):
         '''Creates a customized copy of the Signature.
