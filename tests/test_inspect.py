@@ -777,7 +777,7 @@ class TestSignatureBind(unittest.TestCase):
             self.call(test, 1)
         with self.assertRaisesRegex(TypeError, 'too many positional arguments'):
             self.call(test, 1, spam=10)
-        with self.assertRaisesRegex(TypeError, 'too many keyword arguments'):
+        with self.assertRaisesRegex(TypeError, "got an unexpected keyword argument 'spam'"):
             self.call(test, spam=1)
 
     def test_signature_bind_var(self):
@@ -802,10 +802,10 @@ class TestSignatureBind(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, 'too many positional arguments'):
             self.call(test, 1, 2, 3, 4)
 
-        with self.assertRaisesRegex(TypeError, "'b' parameter lacking default"):
+        with self.assertRaisesRegex(TypeError, "missing a required argument: 'b'"):
             self.call(test, 1)
 
-        with self.assertRaisesRegex(TypeError, "'a' parameter lacking default"):
+        with self.assertRaisesRegex(TypeError, "missing a required argument: 'a'"):
             self.call(test)
 
         def test(a, b, c=10):
@@ -880,7 +880,7 @@ def test_signature_bind_kwonly(self):
     def test(a, *, foo=1, bar):
         return foo
     with self.assertRaisesRegex(TypeError,
-                                 "'bar' parameter lacking default value"):
+                                 "missing a required argument: 'bar'"):
         self.call(test, 1)
 
     def test(foo, *, bar):
@@ -889,7 +889,7 @@ def test_signature_bind_kwonly(self):
     self.assertEqual(self.call(test, bar=2, foo=1), (1, 2))
 
     with self.assertRaisesRegex(TypeError,
-                                 'too many keyword arguments'):
+                                 "got an unexpected keyword argument 'spam'"):
         self.call(test, bar=2, foo=1, spam=10)
 
     with self.assertRaisesRegex(TypeError,
@@ -901,11 +901,11 @@ def test_signature_bind_kwonly(self):
         self.call(test, 1, 2, bar=2)
 
     with self.assertRaisesRegex(TypeError,
-                                 'too many keyword arguments'):
+                                 "got an unexpected keyword argument 'spam'"):
         self.call(test, 1, bar=2, spam='ham')
 
     with self.assertRaisesRegex(TypeError,
-                                 "'bar' parameter lacking default value"):
+                                 "missing a required argument: 'bar'"):
         self.call(test, 1)
 
     def test(foo, *, bar, **bin):
@@ -917,7 +917,7 @@ def test_signature_bind_kwonly(self):
     self.assertEqual(self.call(test, spam='ham', foo=1, bar=2),
                      (1, 2, {'spam': 'ham'}))
     with self.assertRaisesRegex(TypeError,
-                                 "'foo' parameter lacking default value"):
+                                 "missing a required argument: 'foo'"):
         self.call(test, spam='ham', bar=2)
     self.assertEqual(self.call(test, 1, bar=2, bin=1, spam=10),
                      (1, 2, {'bin': 1, 'spam': 10}))

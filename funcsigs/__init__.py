@@ -686,7 +686,7 @@ class Signature(object):
         return not self.__eq__(other)
 
     def _bind(self, args, kwargs, partial=False):
-        '''Private method.  Don't use directly.'''
+        """Private method. Don't use directly."""
 
         arguments = OrderedDict()
 
@@ -701,7 +701,7 @@ class Signature(object):
             for param_name, param in self.parameters.items():
                 if (param._partial_kwarg and param_name not in kwargs):
                     # Simulating 'functools.partial' behavior
-                    kwargs[param_name] = param.default
+                    kwargs[param_name] = param.default	
 
         while True:
             # Let's iterate through the positional arguments and corresponding
@@ -737,11 +737,13 @@ class Signature(object):
                         parameters_ex = (param,)
                         break
                     else:
+                        # No default, not VAR_KEYWORD, not VAR_POSITIONAL,
+                        # not in `kwargs`
                         if partial:
                             parameters_ex = (param,)
                             break
                         else:
-                            msg = '{arg!r} parameter lacking default value'
+                            msg = 'missing a required argument: {arg!r}'
                             msg = msg.format(arg=param.name)
                             raise TypeError(msg)
             else:
@@ -775,17 +777,15 @@ class Signature(object):
         # keyword arguments
         kwargs_param = None
         for param in itertools.chain(parameters_ex, parameters):
-            if param.kind == _POSITIONAL_ONLY:
-                # This should never happen in case of a properly built
-                # Signature object (but let's have this check here
-                # to ensure correct behaviour just in case)
-                raise TypeError('{arg!r} parameter is positional only, '
-                                'but was passed as a keyword'. \
-                                format(arg=param.name))
-
             if param.kind == _VAR_KEYWORD:
                 # Memorize that we have a '**kwargs'-like parameter
                 kwargs_param = param
+                continue
+
+            if param.kind == _VAR_POSITIONAL:
+                # Named arguments don't refer to '*args'-like parameters.
+                # We only arrive here if the positional arguments ended
+                # before reaching the last parameter before *args.
                 continue
 
             param_name = param.name
@@ -798,10 +798,18 @@ class Signature(object):
                 # arguments.
                 if (not partial and param.kind != _VAR_POSITIONAL and
                                                     param.default is _empty):
-                    raise TypeError('{arg!r} parameter lacking default value'. \
+                    raise TypeError('missing a required argument: {arg!r}'. \
                                     format(arg=param_name))
 
             else:
+                if param.kind == _POSITIONAL_ONLY:
+                    # This should never happen in case of a properly built
+                    # Signature object (but let's have this check here
+                    # to ensure correct behaviour just in case)
+                    raise TypeError('{arg!r} parameter is positional only, '
+                                    'but was passed as a keyword'. \
+                                    format(arg=param.name))
+
                 arguments[param_name] = arg_val
 
         if kwargs:
@@ -809,7 +817,9 @@ class Signature(object):
                 # Process our '**kwargs'-like parameter
                 arguments[kwargs_param.name] = kwargs
             else:
-                raise TypeError('too many keyword arguments %r' % kwargs)
+                raise TypeError(
+                    'got an unexpected keyword argument {arg!r}'.format(
+                        arg=next(iter(kwargs))))
 
         return self._bound_arguments_cls(self, arguments)
 
