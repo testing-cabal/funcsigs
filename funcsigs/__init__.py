@@ -202,6 +202,9 @@ class _ParameterKind(int):
         obj._name = kwargs['name']
         return obj
 
+    def __deepcopy__(self, memo):
+        return type(self)(self, name=self._name)
+        
     def __str__(self):
         return self._name
 

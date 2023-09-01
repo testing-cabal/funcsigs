@@ -1,5 +1,6 @@
 import unittest2 as unittest
 
+import copy
 import doctest
 import sys
 
@@ -107,3 +108,9 @@ class TestFunctionSignatures(unittest.TestCase):
         self.assertEqual(
             self.signature(Test.method_with_varargs),
             ((('args', Ellipsis, Ellipsis, "var_positional"),), Ellipsis))
+
+    def test_deepcopy(self):
+        def test(*args, **kwargs):
+            pass
+        sig = self.signature(test)
+        self.assertEqual(sig, copy.deepcopy(sig))
